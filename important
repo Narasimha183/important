@@ -1,0 +1,113 @@
+service now url: https://csmprod.service-now.com/
+
+stagging url :https://de-web-stg.nahdigitalit.cloud.centricaplc.com/pogo/ 
+
+username :kesavan
+Password :Password-1
+
+---------DE details:
+email id:NarasimhaReddy.Venna@directenergy.com
+emp no:875451 
+help desk no : 8918666034357
+username,password :vennan/Jupiter135 
+access :https://access.directenergy.com/logon/LogonPoint/tmindex.html
+checkpoint token :w36e?h92
+
+----------------check point access 
+url :rsaaccess.directenergy.com
+
+--------git lab
+username :nvenna
+password :dPFqtEltt7VdALozryY7
+
+
+service now url :https://csmprod.service-now.com/nav_to.do?uri=%2Fsys_report_template.do%3Fjvar_report_id%3D5f3061a8371b5340e81557c543990e1c%26jvar_selected_chart_options_tab%3D%26jvar_report_home_query%3D
+
+
+FCP --------> https://www.firstchoicepower.com/pogo//view/customer/1005300
+CPL --------> https://www.cplretailenergy.com/pogo//view/customer/630712
+WTU---------> https://www.wturetailenergy.com/pogo/view/customer/403748
+
+--------------------------Local dev URL : https://de.fireengine.dev/pogo/search
+--------------------------->echo url :https://de-echo-prod.nahdigitalit.cloud.centricaplc.com/user/login
+
+------echo credentials:
+username/password:krishk15/Password-1
+
+-----------------------------------------------------DB ISSUE ERROR LIKE ADMIN ------------------------------------
+Problem : The user specified as a definer ('admin'@'%') does not exist
+
+Solution:
+Run the below snippet in you vagrant
+Step 1 :
+        mysqldump -uboun02sa -pHMU1mZq6wsANzjno --triggers --add-drop-trigger --no-create-info --no-data --no-create-db --skip-opt cpl_shard01 > /tmp/triggers.sql
+Step 2:      
+      Search word `admin` in /tmp/triggers.sql file and replace with` boun02sa`
+Step 3:
+     mysql -uboun02sa -pHMU1mZq6wsANzjno cpl_shard01 < /tmp/triggers.sql
+
+cpl_shard01 -> you have to mention yours created database name
+
+
+
+--------------importing customer in local (dev) -------------
+fie path :code/core/goodyear/scripts/test ----> in vagrant
+687216838 – Debtor Number in pogo
+Sheni – Lastname
+77407 – Zipcode
+CNP – Utility Code from Pogo
+E – Commidity
+
+php test-wcl-importibydentity.php 687216838 Sheni 77407  CNP  E LIVE
+
+<------------------------>mobile app issues <----------------------->
+
+
+#1 check if the User Name is locked out with following Query - IsLockedOut=1
+
+select 
+               u.UserName, m.Email,m.UserId ,--   pc.ProfileId,
+               m.IsLockedOut ,u.LastActivityDate, p.FirstName,p.LastName, 
+               p.PhoneNumber,p.Brand, p.ZipCode,
+               pc.AccountNumber,pc.Utility,pc.Commodity,pc.CustomerName, pc.IsDefault,      
+               m.CreateDate , m.LastLoginDate , m.LastPasswordChangedDate, m.LastLockoutDate
+from dbo.aspnet_Users u
+left join dbo.Profile p                                                   on p.UserId=u.UserId
+left join dbo.ProfileCustomer pc on pc.ProfileId = p.ProfileId
+left join dbo.aspnet_Membership m        on m.UserId = u.UserId
+where 
+-- m.Email in ('apachedave63@gmail.com')
+u.UserName in ('lisajames');
+-- p.FirstName in ('Dave') and p.LastName in (' Ross');
+-- pc.AccountNumber in ('4936514');
+
+#2 If Mobile User is locked then use following Process to unlock it 
+
+               USE [OAM]
+               GO
+               EXEC usp_UnlockUserAccount 'DD0F0649-4491-4A36-83FD-C28BC55A14DF' ; -- User ID from First Query
+
+#3 If nothing works and the user is still unable to login then following will Purge the customer 
+               
+               USE [OAM]
+               GO
+               EXEC usp_PurgeCustomerProfileData 'tonyagu2016' ;
+
+#User Following Queries to find the usp_UnlockUserAccount from tables 
+               select * from aspnet_Membership where UserId='CFC349DE-1B88-4DA2-96E4-82D66BCAF948';
+               select * from aspnet_Users where UserName='tonyagu2016';
+               select * from ProfileCustomer where ProfileId='4D0510D7-33A4-495D-AAC2-BA7F2B040D35';
+               select * from Profile where UserId='CFC349DE-1B88-4DA2-96E4-82D66BCAF948';
+
+select * from c_orders where customer_id = 3840837;
+
+NEW RELIC PASSWORD - WUQb3Lb2e9NCd7MH
+
+---------------------------------------RCA ---> Template-------------------------------------
+• What caused the issue? Dropdown was for gas account is labled as electricity and rate for product code is mismatched
+
+• What was the issue? rate for product code and dropdown is mismatched
+
+• How did we fix the issue? checked with discovery team for rate it was correct and there is no issue for dropdown.
+
+• Mitigation plan?NA 
